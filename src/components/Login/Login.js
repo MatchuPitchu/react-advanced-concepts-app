@@ -1,43 +1,47 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
 
-const Login = (props) => {
+const Login = ({ onLogin }) => {
   const [enteredEmail, setEnteredEmail] = useState('');
   const [emailIsValid, setEmailIsValid] = useState();
   const [enteredPassword, setEnteredPassword] = useState('');
   const [passwordIsValid, setPasswordIsValid] = useState();
   const [formIsValid, setFormIsValid] = useState(false);
 
-  const emailChangeHandler = (event) => {
-    setEnteredEmail(event.target.value);
+  useEffect(() => {
+    // debounce user input with setTimeout;
+    // now validation is not executed on every key stroke
+    const timerId = setTimeout(() => {
+      // set to true if both conditions are true
+      setFormIsValid(
+        enteredEmail.includes('@') && enteredPassword.trim().length > 6
+      );
+    }, 500);
+    // need clean up function for setTimeout that is executed BEFORE useEffect runs the next time
+    // OR BEFORE the component is removed from the DOM (-> is unmounted);
+    // save setTimeout above in variable and for next key stroke that's cleared
+    // that I have only one ongoing timer at a time
+    return () => clearTimeout(timerId);
 
-    setFormIsValid(
-      event.target.value.includes('@') && enteredPassword.trim().length > 6
-    );
-  };
+    // set all changable variables as dependencies, so that useEffect reruns if one of them changes
+  }, [enteredEmail, enteredPassword]);
 
-  const passwordChangeHandler = (event) => {
-    setEnteredPassword(event.target.value);
+  const emailHandler = ({ target }) => setEnteredEmail(target.value);
 
-    setFormIsValid(
-      event.target.value.trim().length > 6 && enteredEmail.includes('@')
-    );
-  };
+  const passwordHandler = ({ target }) => setEnteredPassword(target.value);
 
-  const validateEmailHandler = () => {
+  const validateEmailHandler = () =>
     setEmailIsValid(enteredEmail.includes('@'));
-  };
 
-  const validatePasswordHandler = () => {
+  const validatePasswordHandler = () =>
     setPasswordIsValid(enteredPassword.trim().length > 6);
-  };
 
-  const submitHandler = (event) => {
-    event.preventDefault();
-    props.onLogin(enteredEmail, enteredPassword);
+  const submitHandler = (e) => {
+    e.preventDefault();
+    onLogin(enteredEmail, enteredPassword);
   };
 
   return (
@@ -48,12 +52,13 @@ const Login = (props) => {
             emailIsValid === false ? classes.invalid : ''
           }`}
         >
-          <label htmlFor="email">E-Mail</label>
+          <label htmlFor='email'>E-Mail</label>
           <input
-            type="email"
-            id="email"
+            type='email'
+            id='email'
             value={enteredEmail}
-            onChange={emailChangeHandler}
+            onChange={emailHandler}
+            // onBlur is activated when input loses focus
             onBlur={validateEmailHandler}
           />
         </div>
@@ -62,17 +67,17 @@ const Login = (props) => {
             passwordIsValid === false ? classes.invalid : ''
           }`}
         >
-          <label htmlFor="password">Password</label>
+          <label htmlFor='password'>Password</label>
           <input
-            type="password"
-            id="password"
+            type='password'
+            id='password'
             value={enteredPassword}
-            onChange={passwordChangeHandler}
+            onChange={passwordHandler}
             onBlur={validatePasswordHandler}
           />
         </div>
         <div className={classes.actions}>
-          <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+          <Button type='submit' className={classes.btn} disabled={!formIsValid}>
             Login
           </Button>
         </div>
