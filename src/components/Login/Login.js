@@ -5,7 +5,7 @@ import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
 
 // function expression outside of component because inside of reducer fn I don't need any
-// data that is generated inside of component fn
+// data that is generated inside of the component fn
 const emailReducer = (prevState, action) => {
   // condition defined based on action parameter and a related wished state update return
   if (action.type === 'USER_INPUT') {
@@ -42,7 +42,6 @@ const Login = ({ onLogin }) => {
     emailReducer, // reducer function
     { value: '', isValid: null } // initial state
   );
-
   const [passwordState, dispatchPassword] = useReducer(passwordReducer, {
     value: '',
     isValid: null,
@@ -78,7 +77,7 @@ const Login = ({ onLogin }) => {
   const emailHandler = ({ target }) => {
     // setEnteredEmail(target.value);
 
-    // dispatchFn of useReducer to define an action;
+    // dispatchFn of useReducer to pass an "action" as an argument (-> look at parameter of emailReducer fn);
     // here I'm using an obj with type key that describes what happpens AND a payload (-> here a value the user entered)
     dispatchEmail({
       type: 'USER_INPUT',
@@ -103,8 +102,9 @@ const Login = ({ onLogin }) => {
     // setFormIsValid(emailIsValid && target.value.trim().length > 6);
   };
 
-  // two validate functions included state updates that depends on other states
+  // 1a) with useState: two validate functions included state updates that depends on other states;
   // not good practice, because in some scenarios I could update validate state with some outdated state;
+  // 1b) version with useReducer
   const validateEmailHandler = () => {
     // setEmailIsValid(enteredEmail.includes('@'));
     dispatchEmail({
@@ -120,7 +120,9 @@ const Login = ({ onLogin }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    // 1a) with useState
     // onLogin(enteredEmail, enteredPassword);
+    // 1b) with useReducer
     onLogin(emailState.value, passwordState.value);
   };
 
