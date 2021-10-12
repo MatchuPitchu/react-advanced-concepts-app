@@ -1,24 +1,29 @@
-import React from 'react';
+import { useContext } from 'react';
 
+import AuthContext from '../../context/auth-context';
 import classes from './Navigation.module.css';
 
-const Navigation = (props) => {
+const Navigation = () => {
+  // pass the pointer to the context obj into useContext
+  // create variables with destructuring
+  const { isLoggedIn, logoutHandler } = useContext(AuthContext);
+
   return (
     <nav className={classes.nav}>
       <ul>
-        {props.isLoggedIn && (
+        {isLoggedIn && (
           <li>
-            <a href="/">Users</a>
+            <a href='/'>Users</a>
           </li>
         )}
-        {props.isLoggedIn && (
+        {isLoggedIn && (
           <li>
-            <a href="/">Admin</a>
+            <a href='/'>Admin</a>
           </li>
         )}
-        {props.isLoggedIn && (
+        {isLoggedIn && (
           <li>
-            <button onClick={props.onLogout}>Logout</button>
+            <button onClick={logoutHandler}>Logout</button>
           </li>
         )}
       </ul>
