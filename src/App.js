@@ -1,5 +1,5 @@
 import { Fragment, useContext } from 'react';
-import AuthContext from './context/auth-context';
+import AuthContext from './context/AuthContext';
 
 import Login from './components/Login/Login';
 import Home from './components/Home/Home';

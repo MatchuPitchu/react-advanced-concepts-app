@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import AuthContext from '../../context/auth-context';
+import AuthContext from '../../context/AuthContext';
 
 import Card from '../UI/Card/Card';
 import Button from '../UI/Button/Button';

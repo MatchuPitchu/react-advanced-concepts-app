@@ -1,9 +1,10 @@
-import { useState, useEffect, useReducer, useContext } from 'react';
-import AuthContext from '../../context/auth-context';
+import { useState, useEffect, useReducer, useContext, useRef } from 'react';
+import AuthContext from '../../context/AuthContext';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
+import Input from '../UI/Input/Input';
 
 // function expression outside of component because inside of reducer fn I don't need any
 // data that is generated inside of the component fn
@@ -55,6 +56,9 @@ const Login = () => {
   // I use destructuring with aliases to extract the valid values
   const { isValid: emailIsValid } = emailState;
   const { isValid: passwordIsValid } = passwordState;
+
+  const emailRef = useRef();
+  const passwordRef = useRef();
 
   useEffect(() => {
     // debounce user input with setTimeout;
@@ -123,46 +127,44 @@ const Login = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // 1a) with useState
-    // onLogin(enteredEmail, enteredPassword);
-    // 1b) with useReducer
-    loginHandler(emailState.value, passwordState.value);
+    if (formIsValid) {
+      // 1a) with useState
+      // onLogin(enteredEmail, enteredPassword);
+      // 1b) with useReducer
+      loginHandler(emailState.value, passwordState.value);
+    } else if (!emailIsValid) {
+      // in Input component defined focus fn focusses invalid input field
+      emailRef.current.focus();
+    } else {
+      passwordRef.current.focus();
+    }
   };
 
   return (
     <Card className={classes.login}>
       <form onSubmit={submitHandler}>
-        <div
-          className={`${classes.control} ${
-            emailState.isValid === false ? classes.invalid : ''
-          }`}
-        >
-          <label htmlFor='email'>E-Mail</label>
-          <input
-            type='email'
-            id='email'
-            value={emailState.value}
-            onChange={emailHandler}
-            // onBlur is activated when input loses focus
-            onBlur={validateEmailHandler}
-          />
-        </div>
-        <div
-          className={`${classes.control} ${
-            passwordState.isValid === false ? classes.invalid : ''
-          }`}
-        >
-          <label htmlFor='password'>Password</label>
-          <input
-            type='password'
-            id='password'
-            value={passwordState.value}
-            onChange={passwordHandler}
-            onBlur={validatePasswordHandler}
-          />
-        </div>
+        <Input
+          ref={emailRef}
+          id='email'
+          label='E-Mail'
+          type='email'
+          isValid={emailIsValid}
+          value={emailState.value}
+          onChange={emailHandler}
+          onBlur={validateEmailHandler}
+        />
+        <Input
+          ref={passwordRef}
+          id='password'
+          label='Password'
+          type='password'
+          isValid={passwordIsValid}
+          value={passwordState.value}
+          onChange={passwordHandler}
+          onBlur={validatePasswordHandler}
+        />
         <div className={classes.actions}>
-          <Button type='submit' className={classes.btn} disabled={!formIsValid}>
+          <Button type='submit' className={classes.btn}>
             Login
           </Button>
         </div>
