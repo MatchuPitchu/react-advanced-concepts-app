@@ -1,4 +1,4 @@
-# React Add Users App
+# React Login Dummy App
 
 Practice project for advanced concepts of React:
 
